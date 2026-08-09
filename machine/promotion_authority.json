@@ -1,0 +1,10 @@
+{
+  "schema": "glaciereq.promotion-authority-grant.v1",
+  "repository": "GlacierEQ/cloudflare-workers-agent-cap",
+  "source_sha": "f9bc2029e799944a03f919fe44ac593481357cd62b9e3c3ebb018ec0aecf9acc",
+  "proof_receipt_digest": "00a7f8e4fcb4603df77dfad6751d8da8beb8fd41a43d28be2314dd92c66507a0",
+  "not_after": 1786401439.758687,
+  "mac": "4bb1f4160c4ecabc8c5f3a5c904f7e4183163e1938cb92726af2c5a0e97eee80",
+  "issuer": "local_operator_promotion_authority",
+  "verified": true
+}

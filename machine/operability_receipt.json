@@ -1,0 +1,18 @@
+{
+  "schema": "glaciereq.operability-receipt.v1",
+  "repository": "GlacierEQ/cloudflare-workers-agent-cap",
+  "at": "2026-08-09T22:37Z",
+  "source_sha": "f9bc2029e799944a03f919fe44ac593481357cd62b9e3c3ebb018ec0aecf9acc",
+  "entry": "scripts/operate.py",
+  "primary_output": {
+    "expected_reason": "CAPABILITY_NOT_GRANTED",
+    "expected_verdict": "REFUSE",
+    "ok": true,
+    "reason": "CAPABILITY_NOT_GRANTED",
+    "token_fp": "379527d163ccf77f4889ca04943ffbe1ebf26268c67f4233fd3b222bc3472151",
+    "verdict": "REFUSE"
+  },
+  "dual_run_ok": true,
+  "result": "PASS",
+  "scratch_launch_log": "wave_b/cloudflare-workers-agent-cap/launch.log"
+}

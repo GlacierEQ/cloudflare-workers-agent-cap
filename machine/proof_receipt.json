@@ -1,0 +1,31 @@
+{
+  "schema": "glaciereq.proof-receipt.v1",
+  "repository": "GlacierEQ/cloudflare-workers-agent-cap",
+  "source_sha": "f9bc2029e799944a03f919fe44ac593481357cd62b9e3c3ebb018ec0aecf9acc",
+  "proof_id": "wave-b-cloudflare-workers-agent-cap-1786315039",
+  "environment": {
+    "python": "3.9.6",
+    "PYTHONPATH": "."
+  },
+  "tests": [
+    "PYTHONPATH=. python3 -m unittest discover -s tests -v (x2)"
+  ],
+  "adversarial_tests": [
+    "tests/test_adversarial.py"
+  ],
+  "runtime": {
+    "operate": "scripts/operate.py (x2)",
+    "dual_run_ok": true,
+    "proof_dual_run_ok": true
+  },
+  "result": "PASS",
+  "limitations": [
+    "not production deployed",
+    "reference implementation only"
+  ],
+  "timestamp": "2026-08-09T22:37Z",
+  "artifact_hashes": {
+    "operability_receipt": "56756df228d57900f364b587a3cc0b4d3e532893f65bd5b6abfa8f76d179db12"
+  },
+  "scratch_proof_log": "wave_b/cloudflare-workers-agent-cap/proof.log"
+}
