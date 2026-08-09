@@ -1,8 +1,9 @@
 {
   "schema": "glaciereq.operability-receipt.v1",
   "repository": "GlacierEQ/cloudflare-workers-agent-cap",
-  "at": "2026-08-09T22:37Z",
-  "source_sha": "f9bc2029e799944a03f919fe44ac593481357cd62b9e3c3ebb018ec0aecf9acc",
+  "at": "2026-08-09T22:57Z",
+  "source_sha": "3a3b1b9331acef5b6b5b8cb6e5821c87c8f290fc78f4f305baa9a80b50404005",
+  "source_sha_algorithm": "sha256(newline_join('{rel}:{sha256(bytes)}' for src|scripts|tests .py/.md/.json))",
   "entry": "scripts/operate.py",
   "primary_output": {
     "expected_reason": "CAPABILITY_NOT_GRANTED",
