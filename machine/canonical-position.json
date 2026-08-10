@@ -1,0 +1,22 @@
+{
+  "schema": "glaciereq.repo-canonical-position.v1",
+  "repository": "GlacierEQ/cloudflare-workers-agent-cap",
+  "position_state": "RESOLVED",
+  "role": "company_specific_specialist_system",
+  "company_target": "Cloudflare",
+  "canonical_identity": "workers-agent-cap",
+  "unique_value": [
+    "request-scoped capability tokens enumerate the exact APIs an edge agent may invoke",
+    "invoke() refuses capabilities outside the original token set",
+    "authority cannot escalate in place during the request"
+  ],
+  "capability_contribution": {
+    "family": "request_scoped_capability_authority",
+    "extractable_mechanisms": ["exact capability token sets", "fail-closed out-of-set invocation", "non-escalating request authority"],
+    "ownership": "This repository remains the owning Cloudflare-specialist implementation; extraction preserves identity and lineage."
+  },
+  "integration_policy": {"preserve_repository_identity":true,"preserve_lineage":true,"presentation_independent":true,"size_or_loc_not_dispositive":true,"absorption_requires_functional_equivalence":true,"absorption_requires_proof_equivalence":true},
+  "next_evolution": "Add attenuating delegation across worker hops, capability provenance, and bounded sub-cap issuance without introducing in-place escalation.",
+  "evidence_refs": ["ISSUE_CONTRACT.md","machine/target-contract.json","machine/proof_receipt.json","machine/operability_receipt.json","machine/promotion_authority.json"],
+  "nonclaims": ["no Cloudflare affiliation", "not a production Workers authorization service"]
+}
