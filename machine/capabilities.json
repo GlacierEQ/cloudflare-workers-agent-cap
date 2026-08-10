@@ -1,1 +1,21 @@
-{"capabilities": ["hyper-scaling"]}
+{
+  "schema": "glaciereq.repo-capabilities.v1",
+  "repository": "GlacierEQ/cloudflare-workers-agent-cap",
+  "capability_family": "request_scoped_capability_authority",
+  "capabilities": [
+    "request-scoped-capability-tokens",
+    "capability-token-integrity-verification",
+    "capability-expiry-enforcement",
+    "fail-closed-out-of-set-invocation",
+    "non-escalating-request-authority",
+    "deterministic-token-fingerprints"
+  ],
+  "evidence_refs": [
+    "src/agent_cap.py",
+    "tests/test_agent_cap.py",
+    "tests/test_adversarial.py",
+    "machine/proof_receipt.json",
+    "machine/canonical-position.json"
+  ],
+  "truth_boundary": "Repository-local mechanisms only. No Cloudflare adoption, production Workers deployment, or exercised integration with adjacent repositories is implied."
+}
