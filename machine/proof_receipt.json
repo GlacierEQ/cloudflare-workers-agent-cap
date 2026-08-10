@@ -1,21 +1,18 @@
 {
   "schema": "glaciereq.proof-receipt.v1",
   "repository": "GlacierEQ/cloudflare-workers-agent-cap",
-  "source_sha": "3a3b1b9331acef5b6b5b8cb6e5821c87c8f290fc78f4f305baa9a80b50404005",
-  "source_sha_algorithm": "sha256(newline_join('{rel}:{sha256(bytes)}' for src|scripts|tests .py/.md/.json))",
-  "proof_id": "wave-b-fix-cloudflare-workers-agent-cap-1786316261",
+  "source_sha": "464eefb46d94cd085b353ddee8db84f6bfac2d17d0d273e916f8d6d9e35029e3",
+  "proof_id": "elite-cloudflare-workers-agent-cap-1786335149",
   "environment": {
-    "python": "3.9.6",
-    "PYTHONPATH": "."
+    "python": "/Users/kcbflux/job-app/excellence/.venv-elite/bin/python",
+    "PYTHONPATH": "/Users/kcbflux/job-app/repos/cloudflare-workers-agent-cap:/Users/kcbflux/job-app/repos/cloudflare-workers-agent-cap/src",
+    "entry": "unittest"
   },
   "tests": [
-    "PYTHONPATH=. python3 -m unittest discover -s tests -v (x2)"
+    "/Users/kcbflux/job-app/excellence/.venv-elite/bin/python -m unittest discover -s tests -v (x2)"
   ],
   "adversarial_tests": [
     "tests/test_adversarial.py"
-  ],
-  "authority_tests": [
-    "tests/test_promotion_authority.py::test_real_machine_grant_verifies_against_proof_receipt"
   ],
   "runtime": {
     "operate": "scripts/operate.py (x2)",
@@ -27,9 +24,8 @@
     "not production deployed",
     "reference implementation only"
   ],
-  "timestamp": "2026-08-09T22:57Z",
+  "timestamp": "2026-08-10T04:12Z",
   "artifact_hashes": {
-    "operability_receipt": "e8a9978f57d66561327912e4555d16247af98688451d49c9a412a961336252bd"
-  },
-  "scratch_proof_log": "wave_b/cloudflare-workers-agent-cap/proof.log"
+    "operability_receipt": "f88367af7cb11c3067657d742eb8a9479d3f0e02827acb9ee39f7644585f3ad3"
+  }
 }

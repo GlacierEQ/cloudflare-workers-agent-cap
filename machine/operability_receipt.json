@@ -1,9 +1,8 @@
 {
   "schema": "glaciereq.operability-receipt.v1",
   "repository": "GlacierEQ/cloudflare-workers-agent-cap",
-  "at": "2026-08-09T22:57Z",
-  "source_sha": "3a3b1b9331acef5b6b5b8cb6e5821c87c8f290fc78f4f305baa9a80b50404005",
-  "source_sha_algorithm": "sha256(newline_join('{rel}:{sha256(bytes)}' for src|scripts|tests .py/.md/.json))",
+  "at": "2026-08-10T04:12Z",
+  "source_sha": "464eefb46d94cd085b353ddee8db84f6bfac2d17d0d273e916f8d6d9e35029e3",
   "entry": "scripts/operate.py",
   "primary_output": {
     "expected_reason": "CAPABILITY_NOT_GRANTED",
@@ -14,6 +13,5 @@
     "verdict": "REFUSE"
   },
   "dual_run_ok": true,
-  "result": "PASS",
-  "scratch_launch_log": "wave_b/cloudflare-workers-agent-cap/launch.log"
+  "result": "PASS"
 }

@@ -1,12 +1,11 @@
 {
   "schema": "glaciereq.promotion-authority-grant.v1",
   "repository": "GlacierEQ/cloudflare-workers-agent-cap",
-  "source_sha": "3a3b1b9331acef5b6b5b8cb6e5821c87c8f290fc78f4f305baa9a80b50404005",
-  "proof_receipt_digest": "7dfbb2504b067e44b92345a9af08125d2923ebcb3e994a17496eb3df6dfead26",
-  "not_after": 1788908261.7824872,
-  "mac": "ea896ba04c7a5ae2a762f8163bd4841f482f038bc6bcf49814748dada24da926",
+  "source_sha": "464eefb46d94cd085b353ddee8db84f6bfac2d17d0d273e916f8d6d9e35029e3",
+  "proof_receipt_digest": "affa7ccdc5211c5dac80cf5a0c17cc12ed5e8f797cf580b48b76e1580d812a8c",
+  "not_after": 1788927149.234226,
+  "mac": "787f398c7f6f47944cb307ca72c8679e45570c678c5c8d820cf6890dab5fe30b",
   "issuer": "local_operator_promotion_authority",
   "verified": true,
-  "verification_procedure": "LOCAL reference authority only. Secret constant: src/promotion_authority.py::LOCAL_OPERATOR_SECRET (= b'glaciereq-local-operator-promotion-authority-v1'). Verify: python3 scripts/verify_promotion_grant.py",
   "secret_ref": "src/promotion_authority.py::LOCAL_OPERATOR_SECRET"
 }
