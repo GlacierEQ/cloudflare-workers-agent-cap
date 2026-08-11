@@ -11,16 +11,11 @@ from typing import Iterable
 
 
 TOKEN_VERSION = 2
+_TIME_SCALE = 1_000_000
 
 
 def canonical_json(obj: object) -> str:
-    return json.dumps(
-        obj,
-        sort_keys=True,
-        separators=(",", ":"),
-        ensure_ascii=False,
-        allow_nan=False,
-    )
+    return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
 
 
 def digest(obj: object) -> str:
@@ -37,6 +32,16 @@ def _finite(name: str, value: float) -> float:
     if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)):
         raise ValueError(name)
     return float(value)
+
+
+def _time_us(name: str, value: float) -> int:
+    normalized = _finite(name, value)
+    if normalized < 0:
+        raise ValueError(name)
+    micros = int(math.floor(normalized * _TIME_SCALE + 0.5))
+    if abs(micros / _TIME_SCALE - normalized) > 1e-9:
+        raise ValueError(f"{name}_precision")
+    return micros
 
 
 def _capabilities(values: Iterable[str]) -> frozenset[str]:
@@ -73,6 +78,8 @@ class CapToken:
         object.__setattr__(self, "capabilities", _capabilities(self.capabilities))
         nb = _finite("not_before", self.not_before)
         na = _finite("not_after", self.not_after)
+        _time_us("not_before", nb)
+        _time_us("not_after", na)
         if na <= nb:
             raise ValueError("validity_window")
         object.__setattr__(self, "not_before", nb)
@@ -95,8 +102,8 @@ class CapToken:
             "version": self.version,
             "request_id": self.request_id,
             "capabilities": sorted(self.capabilities),
-            "not_before": self.not_before,
-            "not_after": self.not_after,
+            "not_before_us": _time_us("not_before", self.not_before),
+            "not_after_us": _time_us("not_after", self.not_after),
             "issuer_id": self.issuer_id,
             "parent_fingerprint": self.parent_fingerprint,
             "delegation_depth": self.delegation_depth,
@@ -130,22 +137,9 @@ class CapMint:
         self.issuer_id = _token("issuer_id", issuer_id)
 
     def _mac(self, body: dict[str, object]) -> str:
-        return hmac.new(
-            self._secret,
-            canonical_json(body).encode("utf-8"),
-            hashlib.sha256,
-        ).hexdigest()
+        return hmac.new(self._secret, canonical_json(body).encode("utf-8"), hashlib.sha256).hexdigest()
 
-    def _build(
-        self,
-        request_id: str,
-        capabilities: Iterable[str],
-        *,
-        not_before: float,
-        not_after: float,
-        parent_fingerprint: str,
-        delegation_depth: int,
-    ) -> CapToken:
+    def _build(self, request_id: str, capabilities: Iterable[str], *, not_before: float, not_after: float, parent_fingerprint: str, delegation_depth: int) -> CapToken:
         rid = _token("request_id", request_id)
         caps = _capabilities(capabilities)
         nb = _finite("not_before", not_before)
@@ -156,43 +150,19 @@ class CapMint:
             "version": TOKEN_VERSION,
             "request_id": rid,
             "capabilities": sorted(caps),
-            "not_before": nb,
-            "not_after": na,
+            "not_before_us": _time_us("not_before", nb),
+            "not_after_us": _time_us("not_after", na),
             "issuer_id": self.issuer_id,
             "parent_fingerprint": parent_fingerprint,
             "delegation_depth": delegation_depth,
         }
-        return CapToken(
-            request_id=rid,
-            capabilities=caps,
-            not_after=na,
-            mac=self._mac(body),
-            not_before=nb,
-            issuer_id=self.issuer_id,
-            parent_fingerprint=parent_fingerprint,
-            delegation_depth=delegation_depth,
-        )
+        return CapToken(rid, caps, na, self._mac(body), nb, self.issuer_id, parent_fingerprint, delegation_depth)
 
-    def mint(
-        self,
-        request_id: str,
-        capabilities: Iterable[str],
-        not_after: float,
-        not_before: float = 0.0,
-    ) -> CapToken:
-        return self._build(
-            request_id,
-            capabilities,
-            not_before=not_before,
-            not_after=not_after,
-            parent_fingerprint="",
-            delegation_depth=0,
-        )
+    def mint(self, request_id: str, capabilities: Iterable[str], not_after: float, not_before: float = 0.0) -> CapToken:
+        return self._build(request_id, capabilities, not_before=not_before, not_after=not_after, parent_fingerprint="", delegation_depth=0)
 
     def verify(self, token: CapToken) -> bool:
-        if not isinstance(token, CapToken):
-            return False
-        if token.issuer_id != self.issuer_id:
+        if not isinstance(token, CapToken) or token.issuer_id != self.issuer_id:
             return False
         try:
             expected = self._mac(token.unsigned_body())
@@ -200,14 +170,7 @@ class CapMint:
             return False
         return hmac.compare_digest(expected, token.mac)
 
-    def issue_subcap(
-        self,
-        parent: CapToken,
-        request_id: str,
-        capabilities: Iterable[str],
-        not_after: float,
-        not_before: float | None = None,
-    ) -> tuple[CapToken, DelegationReceipt]:
+    def issue_subcap(self, parent: CapToken, request_id: str, capabilities: Iterable[str], not_after: float, not_before: float | None = None) -> tuple[CapToken, DelegationReceipt]:
         if not self.verify(parent):
             raise PermissionError("PARENT_TOKEN_INVALID")
         rid = _token("request_id", request_id)
@@ -220,32 +183,20 @@ class CapMint:
         child_na = _finite("not_after", not_after)
         if child_nb < parent.not_before or child_na > parent.not_after or child_na <= child_nb:
             raise PermissionError("TIME_ESCALATION")
-
-        child = self._build(
-            rid,
-            child_caps,
-            not_before=child_nb,
-            not_after=child_na,
-            parent_fingerprint=parent.fingerprint(),
-            delegation_depth=parent.delegation_depth + 1,
-        )
-        receipt = self.delegation_receipt(parent, child)
-        return child, receipt
+        child = self._build(rid, child_caps, not_before=child_nb, not_after=child_na, parent_fingerprint=parent.fingerprint(), delegation_depth=parent.delegation_depth + 1)
+        return child, self.delegation_receipt(parent, child)
 
     def verify_delegation(self, parent: CapToken, child: CapToken) -> bool:
         if not self.verify(parent) or not self.verify(child):
             return False
-        if child.parent_fingerprint != parent.fingerprint():
-            return False
-        if child.issuer_id != parent.issuer_id:
-            return False
-        if child.delegation_depth != parent.delegation_depth + 1:
-            return False
-        if not child.capabilities.issubset(parent.capabilities):
-            return False
-        if child.not_before < parent.not_before or child.not_after > parent.not_after:
-            return False
-        return True
+        return (
+            child.parent_fingerprint == parent.fingerprint()
+            and child.issuer_id == parent.issuer_id
+            and child.delegation_depth == parent.delegation_depth + 1
+            and child.capabilities.issubset(parent.capabilities)
+            and child.not_before >= parent.not_before
+            and child.not_after <= parent.not_after
+        )
 
     def delegation_receipt(self, parent: CapToken, child: CapToken) -> DelegationReceipt:
         if not self.verify_delegation(parent, child):
@@ -257,27 +208,14 @@ class CapMint:
             "issuer_id": child.issuer_id,
             "child_request_id": child.request_id,
             "removed_capabilities": list(removed),
-            "parent_not_before": parent.not_before,
-            "child_not_before": child.not_before,
-            "parent_not_after": parent.not_after,
-            "child_not_after": child.not_after,
+            "parent_not_before_us": _time_us("parent_not_before", parent.not_before),
+            "child_not_before_us": _time_us("child_not_before", child.not_before),
+            "parent_not_after_us": _time_us("parent_not_after", parent.not_after),
+            "child_not_after_us": _time_us("child_not_after", child.not_after),
             "parent_depth": parent.delegation_depth,
             "child_depth": child.delegation_depth,
         }
-        return DelegationReceipt(
-            parent_fingerprint=body["parent_fingerprint"],
-            child_fingerprint=body["child_fingerprint"],
-            issuer_id=child.issuer_id,
-            child_request_id=child.request_id,
-            removed_capabilities=removed,
-            parent_not_before=parent.not_before,
-            child_not_before=child.not_before,
-            parent_not_after=parent.not_after,
-            child_not_after=child.not_after,
-            parent_depth=parent.delegation_depth,
-            child_depth=child.delegation_depth,
-            fingerprint=digest(body),
-        )
+        return DelegationReceipt(parent.fingerprint(), child.fingerprint(), child.issuer_id, child.request_id, removed, parent.not_before, child.not_before, parent.not_after, child.not_after, parent.delegation_depth, child.delegation_depth, digest(body))
 
 
 class AgentCapRuntime:
@@ -301,5 +239,4 @@ class AgentCapRuntime:
         return CapVerdict.ALLOW, None
 
     def escalate(self, token: CapToken, new_cap: str) -> None:
-        """Explicitly unsupported — authority must be issued as a new attenuated subcap."""
         raise RuntimeError("ESCALATION_FORBIDDEN: use issue_subcap with a verified parent")
