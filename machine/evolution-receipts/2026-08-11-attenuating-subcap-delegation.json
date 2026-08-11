@@ -1,0 +1,35 @@
+{
+  "schema": "glaciereq.repo-evolution-receipt.v1",
+  "repository": "GlacierEQ/cloudflare-workers-agent-cap",
+  "consumed_cursor": "next:attenuating_delegation_capability_provenance_bounded_subcap_issuance_without_in_place_escalation",
+  "candidate_source_sha": "d710370ecb7d03bd94cc08f4500d8e3ed92902ba",
+  "workflow_run": 31464021756,
+  "result": "PASS",
+  "observed_lanes": {"python_unittest":"PASS","node":"PASS"},
+  "verified_mechanisms": [
+    "capability tokens use structurally framed canonical JSON rather than delimiter-ambiguous signing bodies",
+    "signed time fields normalize to integer microseconds and fixed vectors match across Python and Node",
+    "subcap issuance requires a verified parent token",
+    "child capability sets must be strict or equal subsets of parent authority and cannot add capabilities",
+    "child validity cannot begin earlier or end later than parent validity",
+    "child request identity is distinct and child provenance binds the exact parent fingerprint and delegation depth",
+    "delegation verification fails for the wrong parent or tampered child content",
+    "deterministic delegation receipts bind parent/child identities, removed capabilities, time attenuation, and depth",
+    "in-place escalation remains forbidden"
+  ],
+  "fixed_vectors": {
+    "root_mac": "a56ac6b6edea0411ed64c319c62ce30d0180b770d8753b6ea111c4d93b42a09c",
+    "root_fingerprint": "cf8ecf84b94045d72ced2471abcd76f22a52025e5014673a34e000b8269e49eb",
+    "child_mac": "52ecf7bd9562fcf4a0569b7880f0a6c5aa7c87ae077f9f26e7c44c28bc04fc43",
+    "child_fingerprint": "db45b340f54c52132d25234fcb7bb88baaf69369d88601c5ce98a3aeff813784",
+    "delegation_receipt_fingerprint": "cb602f1db81add14536dc4e615f1a54f5bdbf20714ee333c7e81ed06b93a9395"
+  },
+  "boundaries": [
+    "HMAC authority is a repository-local shared-secret issuer, not an externally rooted Cloudflare identity",
+    "no revocation ledger is implemented",
+    "no durable distributed replay state is implemented",
+    "no Cloudflare affiliation or adoption",
+    "not a production Workers authorization service"
+  ],
+  "next_cursor": "next:externally_rooted_issuer_identity_revocation_and_durable_distributed_replay_state"
+}
