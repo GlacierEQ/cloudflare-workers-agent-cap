@@ -2,21 +2,49 @@
   "schema": "glaciereq.repo-target-contract.v1",
   "identity": {
     "repository_id": "GlacierEQ/cloudflare-workers-agent-cap",
-    "family": "elite-estate"
+    "family": "elite-estate",
+    "canonical_identity": "workers-agent-cap"
   },
   "current": {
-    "state": "PROMOTED",
+    "state": "EVOLVING",
     "implemented": true,
     "tested": true,
-    "deployed": false
+    "deployed": false,
+    "evolution_generation": 1
   },
-  "nonclaims": [
-    "no employer affiliation",
-    "no production deployment without receipt"
+  "target": {
+    "purpose": "Bind edge-agent authority to request-scoped capability tokens that can be delegated only by attenuation with explicit provenance.",
+    "central_bottleneck": "Flat capability tokens prevent in-place escalation but do not prove how bounded authority moves across worker hops, and delimiter-framed signatures can make structurally different capability sets ambiguous."
+  },
+  "invariants": [
+    "signed token structure uses canonical JSON with cross-runtime microsecond time normalization",
+    "a delegated child must bind a verified parent fingerprint and depth+1 provenance",
+    "child capabilities cannot exceed the parent capability set",
+    "child validity cannot expand beyond the parent validity window",
+    "child request identity must differ from the parent request identity",
+    "tampered child content or wrong-parent verification fails closed",
+    "delegation produces a deterministic receipt without mutating parent authority",
+    "in-place escalation remains forbidden"
   ],
+  "promotion": {
+    "required_tests": ["python", "node", "adversarial", "cross_runtime_fixed_vectors", "delegation_attenuation"],
+    "require_exact_source_sha": true,
+    "require_receipt": true,
+    "require_nonclaims": true
+  },
   "donor_plan": {
-    "mode": "none",
+    "status": "RESOLVED",
+    "strategy": "INDEPENDENT_MECHANISM_PRESERVED",
     "donors": []
   },
-  "frozen_at": "2026-08-10T04:12Z"
+  "nonclaims": [
+    "no Cloudflare affiliation",
+    "no Cloudflare adoption",
+    "not a production Workers authorization service",
+    "issuer identity is a local shared-secret authority rather than externally rooted identity",
+    "no revocation ledger",
+    "no durable distributed replay state"
+  ],
+  "completed_evolution_receipt": "machine/evolution-receipts/2026-08-11-attenuating-subcap-delegation.json",
+  "next_evolution": "next:externally_rooted_issuer_identity_revocation_and_durable_distributed_replay_state"
 }
