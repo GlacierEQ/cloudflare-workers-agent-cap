@@ -26,19 +26,26 @@ class CanonicalPositionContractTests(unittest.TestCase):
         self.assertTrue(policy["absorption_requires_proof_equivalence"])
 
     def test_capabilities_name_repository_native_authority_mechanisms(self):
-        self.assertEqual(
-            CAPABILITIES["capability_family"], "request_scoped_capability_authority"
-        )
+        self.assertEqual(CAPABILITIES["capability_family"], "request_scoped_capability_authority")
         capabilities = set(CAPABILITIES["capabilities"])
         self.assertIn("request-scoped-capability-tokens", capabilities)
         self.assertIn("capability-expiry-enforcement", capabilities)
         self.assertIn("fail-closed-out-of-set-invocation", capabilities)
         self.assertIn("non-escalating-request-authority", capabilities)
+        self.assertIn("attenuating-subcap-issuance", capabilities)
+        self.assertIn("parent-fingerprint-capability-provenance", capabilities)
         self.assertNotIn("hyper-scaling", capabilities)
 
     def test_evolution_and_claim_boundary_are_material(self):
-        self.assertTrue(STATE["evolution_cursor"].startswith("next:"))
-        self.assertIn("attenuating delegation", POSITION["next_evolution"])
+        self.assertEqual(
+            POSITION["completed_evolution"]["cursor"],
+            "next:attenuating_delegation_capability_provenance_bounded_subcap_issuance_without_in_place_escalation",
+        )
+        self.assertEqual(
+            STATE["evolution_cursor"],
+            "next:externally_rooted_issuer_identity_revocation_and_durable_distributed_replay_state",
+        )
+        self.assertIn("Root issuer identity outside", POSITION["next_evolution"])
         self.assertIn("no Cloudflare affiliation", POSITION["nonclaims"])
         self.assertIn("No Cloudflare adoption", CAPABILITIES["truth_boundary"])
 
